@@ -1,10 +1,56 @@
 #include <iostream>
 #include <array>
+#include <vector>
+
 #include "include/Example.h"
 // This also works if you do not want `include/`, but some editors might not like it
 // #include "Example.h"
 
+class panou_iluminare {
+    bool aprins;
+    int brightness;
+    std::string firma;
+};
+
+class grup_iluminare {
+    std::vector<panou_iluminare> panouri;
+};
+
+class cuier {
+    int nr_haine;
+    int nr_randuri;
+public:
+    int get_nr_randuri() { return nr_randuri;}
+    int get_nr_haine() {
+        if (nr_randuri == 0)
+            return -1;
+        return nr_haine;
+    }
+
+    void set_nr_randuri(int nr) {
+        if (nr < 1)
+            return;
+        nr_randuri = nr;
+    }
+
+    void set_nr_haine(int nr) {nr_haine = nr;}
+};
+
+
+class sala {
+    std::vector<grup_iluminare> grupLumina;
+    int numar;
+    double zgomot;
+    cuier cuier;
+};
+
+
 int main() {
+    cuier c1;
+    //c1.nrhaine = 2;
+    c1.set_nr_haine(2);
+    std::cout << c1.nr_haine << '\n';
+
     std::cout << "lalala\n";
     Example e1;
     e1.g();
