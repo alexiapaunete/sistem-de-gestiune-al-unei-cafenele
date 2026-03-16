@@ -1,101 +1,69 @@
 #include <iostream>
-#include <array>
 #include <vector>
+#include <string>
 
-#include "include/Example.h"
-// This also works if you do not want `include/`, but some editors might not like it
-// #include "Example.h"
-
-class panou_iluminare {
-    bool aprins;
-    int brightness;
-    std::string firma;
-};
-
-class grup_iluminare {
-    std::vector<panou_iluminare> panouri;
-};
-
-class cuier {
-    int nr_haine;
-    int nr_randuri;
+class Ingredient {
+    std::string nume;
+    double cantitate;
 public:
-    int get_nr_randuri() { return nr_randuri;}
-    int get_nr_haine() {
-        if (nr_randuri == 0)
-            return -1;
-        return nr_haine;
-    }
+    Ingredient(std::string n = "", double c = 0) : nume(n), cantitate(c) {}
 
-    void set_nr_randuri(int nr) {
-        if (nr < 1)
-            return;
-        nr_randuri = nr;
+    // Operatorul << cerut pentru compunere
+    friend std::ostream& operator<<(std::ostream& os, const Ingredient& i) {
+        os << i.nume << ": " << i.cantitate;
+        return os;
     }
-
-    void set_nr_haine(int nr) {nr_haine = nr;}
 };
 
+class Reteta {
+    std::string numeBautura;
+    std::vector<Ingredient> ingrediente; // Compunere
 
-class sala {
-    std::vector<grup_iluminare> grupLumina;
-    int numar;
-    double zgomot;
-    cuier cuier;
+public:
+    Reteta(std::string nume = "") : numeBautura(nume) {}
+
+    void adaugaIngredient(const Ingredient& ing) {
+        ingrediente.push_back(ing);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Reteta& r) {
+        os << "Reteta pentru " << r.numeBautura << " contine: ";
+        for(const auto& ing : r.ingrediente) os << "[" << ing << "] ";
+        return os;
+    }
 };
 
+class Produs {
+    Reteta reteta; // Compunere
+    double pret;
+    static int TVA; // Un mic plus pentru complexitate
 
-int main() {
-    cuier c1;
-    //c1.nrhaine = 2;
-    c1.set_nr_haine(2);
-    std::cout << c1.nr_haine << '\n';
+public:
+    // Constructor cu parametri
+    Produs(const Reteta& r, double p) : reteta(r), pret(p) {}
 
-    std::cout << "lalala\n";
-    Example e1;
-    e1.g();
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
+    // Regula celor 3 (Rule of Three) implementata pe o clasa (ex: Produs sau Cafenea)
+    // Daca folosim std::vector si std::string, compilatorul le genereaza bine,
+    // dar cerinta cere sa le scrii tu explicit pentru o clasa.
+    Produs(const Produs& other) : reteta(other.reteta), pret(other.pret) {}
+
+    Produs& operator=(const Produs& other) {
+        if (this != &other) {
+            reteta = other.reteta;
+            pret = other.pret;
+        }
+        return *this;
     }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
+
+    ~Produs() {} // Destructor
+
+    // Functie netriviala 1: Calcul pret cu reducere si taxe
+    double calculeazaPretFinal(double discount) const {
+        return (pret - (pret * discount / 100)) * 1.19;
     }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
-    return 0;
-}
+
+    friend std::ostream& operator<<(std::ostream& os, const Produs& p) {
+        os << "Produs: " << p.reteta << " | Pret baza: " << p.pret;
+        return os;
+    }
+};
