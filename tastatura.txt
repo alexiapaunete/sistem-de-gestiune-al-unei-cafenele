@@ -1,2 +1,24 @@
-5
-11 22 33 44 55
+# Date de intrare de la tastatura (daca programul ar citi cin)
+# Format: <raspuns utilizator>
+
+# Exemplu adaugare ingredient:
+# nume: Espresso
+# cantitate: 30
+# unitate: ml
+
+# Exemplu creare reteta:
+# nume bautura: Cappuccino
+# timp preparare (secunde): 120
+# nr ingrediente: 3
+
+# Exemplu creare produs:
+# categorie: Cafea
+# pret baza (RON): 12.00
+
+# Exemplu creare comanda:
+# nume client: Ana Ionescu
+# discount global (%): 0
+
+# Exemplu promotie:
+# prag valoare (RON): 30.00
+# discount extra (%): 5.00

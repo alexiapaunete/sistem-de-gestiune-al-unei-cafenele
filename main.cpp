@@ -16,7 +16,7 @@ public:
 
 class Reteta {
     std::string numeBautura;
-    std::vector<Ingredient> ingrediente; // Compunere
+    std::vector<Ingredient> ingrediente;
 
 public:
     Reteta(std::string nume = "") : numeBautura(nume) {}
