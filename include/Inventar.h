@@ -1,21 +1,24 @@
-#ifndef INVENTAR_H
-#define INVENTAR_H
-
-#include <map>
+#pragma once
+#include <iostream>
 #include <string>
-#include <vector>
+#include <map>
+
+enum class StareStoc { SUFICIENT, AVERTIZARE, EPUIZAT, NECUNOSCUT };
 
 class Inventar {
-private:
     std::map<std::string, double> stoc;
-    Inventar() {} 
+    std::map<std::string, double> praguri;
+
+    static std::string stareToString(StareStoc s);
 
 public:
-    static Inventar& getInstance(); 
+    Inventar() = default;
 
-    void adaugaStoc(std::string nume, double cantitate);
-    bool verificaSiConsuma(std::map<std::string, double> reteta);
-    void afiseazaRaportAprovizionare() const;
+    void adaugaIngredient(const std::string& nume, double cantitate, double prag);
+    bool consuma(const std::string& nume, double cantitate);
+
+    [[nodiscard]] bool verificaDisponibilitate(const std::string& nume, double cantitate) const;
+    [[nodiscard]] StareStoc getStareIngredient(const std::string& nume) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Inventar& inv);
 };
-
-#endif
