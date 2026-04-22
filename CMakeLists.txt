@@ -17,6 +17,8 @@ set(SOURCES
     src/Comanda.cpp
     src/Cafenea.cpp
     src/main.cpp
+        src/Inventar.cpp
+        include/Inventar.h
 )
 
 add_executable(cafenea ${SOURCES})
