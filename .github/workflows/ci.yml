@@ -3,25 +3,52 @@ name: CI
 on:
   push:
     branches: [ "**" ]
+    tags: [ "**" ]
   pull_request:
     branches: [ "**" ]
 
 jobs:
-  build-and-run:
-    runs-on: ubuntu-latest
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Ubuntu 22.04 - GCC 12"
+            os: ubuntu-22.04
+            cc: gcc-12
+            cxx: g++-12
+
+          - name: "Ubuntu 24.04 - Clang 18"
+            os: ubuntu-24.04
+            cc: clang-18
+            cxx: clang++-18
+
+          - name: "macOS 14 - Apple Clang"
+            os: macos-14
+            cc: clang
+            cxx: clang++
+
+          - name: "Windows 2022 - MSVC"
+            os: windows-2022
+            cc: cl
+            cxx: cl
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++
+      - name: Configure CMake (Unix)
+        if: runner.os != 'Windows'
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-      - name: Configure CMake
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --parallel
-
-      - name: Run application
-        run: ./build/cafenea
+        run: cmake --build build --config Release --parallel

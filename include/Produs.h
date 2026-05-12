@@ -15,7 +15,7 @@ public:
 
     Produs(const Produs& other);
     Produs& operator=(const Produs& other);
-    ~Produs() = default;
+    ~Produs();
 
     [[nodiscard]] double pretFinal(double discount = 0.0) const;
     [[nodiscard]] int timpServire() const;

@@ -5,20 +5,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Warnings stricte
-add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+# Warnings stricte - condiționale pe compilator
+if(MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+endif()
 
 include_directories(include)
 
 set(SOURCES
-    src/Ingredient.cpp
-    src/Reteta.cpp
-    src/Produs.cpp
-    src/Comanda.cpp
-    src/Cafenea.cpp
-    src/main.cpp
+        src/Ingredient.cpp
+        src/Reteta.cpp
+        src/Produs.cpp
+        src/Comanda.cpp
         src/Inventar.cpp
-        include/Inventar.h
+        src/Cafenea.cpp
+        src/main.cpp
 )
 
 add_executable(cafenea ${SOURCES})

@@ -2,6 +2,21 @@
 #include <stdexcept>
 #include <iomanip>
 
+Inventar::Inventar() = default;
+
+Inventar::Inventar(const Inventar& other)
+    : stoc(other.stoc), praguri(other.praguri) {}
+
+Inventar& Inventar::operator=(const Inventar& other) {
+    if (this != &other) {
+        stoc    = other.stoc;
+        praguri = other.praguri;
+    }
+    return *this;
+}
+
+Inventar::~Inventar() = default;
+
 std::string Inventar::stareToString(StareStoc s) {
     switch (s) {
         case StareStoc::SUFICIENT:   return "Suficient";

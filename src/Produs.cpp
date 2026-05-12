@@ -8,13 +8,15 @@ Produs::Produs(const Produs& other)
 
 Produs& Produs::operator=(const Produs& other) {
     if (this != &other) {
-        reteta = other.reteta;
+        reteta    = other.reteta;
         categorie = other.categorie;
-        pretBaza = other.pretBaza;
+        pretBaza  = other.pretBaza;
         disponibil = other.disponibil;
     }
     return *this;
 }
+
+Produs::~Produs() = default;
 
 double Produs::pretFinal(double discount) const {
     return pretBaza - (pretBaza * discount / 100.0);

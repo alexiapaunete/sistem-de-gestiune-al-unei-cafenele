@@ -12,7 +12,11 @@ class Inventar {
     static std::string stareToString(StareStoc s);
 
 public:
-    Inventar() = default;
+    explicit Inventar();
+
+    Inventar(const Inventar& other);
+    Inventar& operator=(const Inventar& other);
+    ~Inventar();
 
     void adaugaIngredient(const std::string& nume, double cantitate, double prag);
     bool consuma(const std::string& nume, double cantitate);
