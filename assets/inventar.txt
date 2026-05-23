@@ -1,0 +1,18 @@
+Espresso|500|50
+Lapte|1000|200
+Zahar|200|20
+Sirop vanilie|100|10
+Apa|2000|500
+Cacao|200|30
+Frisca|500|50
+Faina|500|50
+Oua|20|5
+Unt|300|30
+Paine|400|50
+Pui|600|100
+Salata|200|30
+Rosii|300|40
+Paine fara gluten|200|30
+Hummus|300|40
+Avocado|150|20
+Castravete|200|30

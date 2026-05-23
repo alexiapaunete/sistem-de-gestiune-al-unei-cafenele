@@ -1,7 +1,5 @@
-# Asigura detectia corecta a limbajului C++ de catre GitHub Linguist
 *.cpp linguist-language=C++
 *.h   linguist-language=C++
 
-# Fisierele de CI si config nu sunt considerate cod sursa
 *.yml linguist-detectable=false
 CMakeLists.txt linguist-detectable=false

@@ -1,8 +1,12 @@
 #include "Cafenea.h"
 #include "Bautura.h"
 #include "Desert.h"
+#include "Sandwich.h"
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
 void Cafenea::copiazaMeniu(const std::vector<Produs*>& sursa) {
     meniu.reserve(sursa.size());
@@ -55,6 +59,90 @@ void Cafenea::aprovizioneaza(const std::string& ingredient, double cantitate, do
     stocGeneral.adaugaIngredient(ingredient, cantitate, prag);
 }
 
+void Cafenea::incarcaInventarDinFisier(const std::string& cale) {
+    std::ifstream f(cale);
+    if (!f.is_open())
+        throw std::runtime_error("Nu pot deschide fisierul de inventar: " + cale);
+
+    std::string linie;
+    while (std::getline(f, linie)) {
+        if (linie.empty() || linie[0] == '#') continue;
+        std::istringstream ss(linie);
+        std::string nume, cantStr, pragStr;
+        if (!std::getline(ss, nume, '|')    ||
+            !std::getline(ss, cantStr, '|') ||
+            !std::getline(ss, pragStr))
+            continue;
+        stocGeneral.adaugaIngredient(nume, std::stod(cantStr), std::stod(pragStr));
+    }
+}
+
+void Cafenea::incarcaProduseDinFisier(const std::string& cale) {
+    std::ifstream f(cale);
+    if (!f.is_open())
+        throw std::runtime_error("Nu pot deschide fisierul de produse: " + cale);
+
+    std::string linie;
+    std::string tipCurent, numeCurent, catCurent;
+    int timpCurent = 0;
+    double pretCurent = 0.0;
+    std::string p1, p2;
+    Reteta* retetaCurenta = nullptr;
+
+    auto finalizeazaProdus = [&]() {
+        if (!retetaCurenta) return;
+        try {
+            if (tipCurent == "BAUTURA") {
+                Bautura b(*retetaCurenta, catCurent, pretCurent,
+                          p1, p2 == "1");
+                adaugaProdus(b);
+            } else if (tipCurent == "DESERT") {
+                Desert d(*retetaCurenta, catCurent, pretCurent,
+                         std::stod(p1), p2 == "1");
+                adaugaProdus(d);
+            } else if (tipCurent == "SANDWICH") {
+                Sandwich s(*retetaCurenta, catCurent, pretCurent,
+                           p1 == "1", p2 == "1");
+                adaugaProdus(s);
+            }
+        } catch (const ProdusDuplicatException&) {
+        }
+        delete retetaCurenta;
+        retetaCurenta = nullptr;
+    };
+
+    while (std::getline(f, linie)) {
+        if (linie.empty() || linie[0] == '#') continue;
+        std::istringstream ss(linie);
+        std::string token;
+        std::getline(ss, token, '|');
+
+        if (token == "ING") {
+            if (!retetaCurenta) continue;
+            std::string numeIng, cantStr, unit;
+            std::getline(ss, numeIng, '|');
+            std::getline(ss, cantStr, '|');
+            std::getline(ss, unit);
+            retetaCurenta->adaugaIngredient(
+                Ingredient(numeIng, std::stod(cantStr), unit));
+        } else if (token == "BAUTURA" || token == "DESERT" || token == "SANDWICH") {
+            finalizeazaProdus();
+            tipCurent = token;
+            std::string timpStr, pretStr;
+            std::getline(ss, numeCurent, '|');
+            std::getline(ss, timpStr,    '|');
+            std::getline(ss, catCurent,  '|');
+            std::getline(ss, pretStr,    '|');
+            std::getline(ss, p1,         '|');
+            std::getline(ss, p2);
+            timpCurent  = std::stoi(timpStr);
+            pretCurent  = std::stod(pretStr);
+            retetaCurenta = new Reteta(numeCurent, timpCurent);
+        }
+    }
+    finalizeazaProdus();
+}
+
 void Cafenea::adaugaComanda(Comanda c) {
     try {
         for (const auto* produs : c.getProduse())
@@ -65,6 +153,8 @@ void Cafenea::adaugaComanda(Comanda c) {
                 Bautura::inregistreazaVanzare();
             else if (dynamic_cast<const Desert*>(produs) != nullptr)
                 Desert::inregistreazaVanzare();
+            else if (dynamic_cast<const Sandwich*>(produs) != nullptr)
+                Sandwich::inregistreazaVanzare();
         }
 
         c.avanseazaStatus();
@@ -105,21 +195,21 @@ void Cafenea::raportZilnic() const {
 
 void Cafenea::raportDupaTip() const {
     std::cout << "\n=== RAPORT PE TIPURI ===\n";
-    int bauturi = 0, deserturi = 0, altele = 0;
+    int bauturi = 0, deserturi = 0, sandwichuri = 0, altele = 0;
     for (const auto* p : meniu) {
-        if (dynamic_cast<const Bautura*>(p))       ++bauturi;
-        else if (dynamic_cast<const Desert*>(p))   ++deserturi;
-        else                                        ++altele;
+        if      (dynamic_cast<const Bautura*>(p))   ++bauturi;
+        else if (dynamic_cast<const Desert*>(p))    ++deserturi;
+        else if (dynamic_cast<const Sandwich*>(p))  ++sandwichuri;
+        else                                         ++altele;
     }
-    std::cout << "Bauturi in meniu:   " << bauturi   << "\n";
-    std::cout << "Deserturi in meniu: " << deserturi << "\n";
-    std::cout << "Altele:             " << altele    << "\n";
-    std::cout << "Bauturi vandute (total sesiune): "
-              << Bautura::getTotalBauturiVandute()  << "\n";
-    std::cout << "Deserturi vandute (total sesiune): "
-              << Desert::getTotalDeserturiVandute() << "\n";
-    std::cout << "Produse create total: "
-              << Produs::getTotalProduseCréate()    << "\n";
+    std::cout << "Bauturi in meniu:     " << bauturi     << "\n";
+    std::cout << "Deserturi in meniu:   " << deserturi   << "\n";
+    std::cout << "Sandwichuri in meniu: " << sandwichuri << "\n";
+    std::cout << "Altele:               " << altele      << "\n";
+    std::cout << "Bauturi vandute:      " << Bautura::getTotalBauturiVandute()     << "\n";
+    std::cout << "Deserturi vandute:    " << Desert::getTotalDeserturiVandute()    << "\n";
+    std::cout << "Sandwichuri vandute:  " << Sandwich::getTotalSandwichuriVandute()<< "\n";
+    std::cout << "Produse create total: " << Produs::getTotalProduseCréate()       << "\n";
     std::cout << "========================\n";
 }
 

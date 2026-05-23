@@ -32,6 +32,9 @@ public:
     void raportZilnic() const;
     void aprovizioneaza(const std::string& ingredient, double cantitate, double prag = 10.0);
 
+    void incarcaProduseDinFisier(const std::string& cale);
+    void incarcaInventarDinFisier(const std::string& cale);
+
     void raportDupaTip() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Cafenea& c);

@@ -1,0 +1,54 @@
+# format: tip|nume_reteta|timp_preparare_sec|categorie|pret|param1|param2
+# tip: BAUTURA, DESERT, SANDWICH
+# BAUTURA:  param1=temperatura(calda/rece), param2=cofeina(1/0)
+# DESERT:   param1=calorii, param2=gluten(1/0)
+# SANDWICH: param1=vegetarian(1/0), param2=gluten_free(1/0)
+#
+# Dupa fiecare produs urmeaza ingredientele lui:
+# ING|nume|cantitate|unitate
+
+BAUTURA|Cappuccino|120|Cafea|12.0|calda|1
+ING|Espresso|30|ml
+ING|Lapte|150|ml
+ING|Zahar|5|g
+
+BAUTURA|Caffe Latte|90|Cafea|14.0|calda|1
+ING|Espresso|30|ml
+ING|Lapte|150|ml
+ING|Sirop vanilie|10|ml
+
+BAUTURA|Americano|60|Cafea|9.0|calda|1
+ING|Espresso|30|ml
+ING|Apa|200|ml
+
+BAUTURA|Mocha|150|Cafea|16.0|calda|1
+ING|Espresso|30|ml
+ING|Lapte|150|ml
+ING|Cacao|8|g
+ING|Frisca|30|ml
+
+BAUTURA|Iced Latte|60|Cafea rece|13.0|rece|1
+ING|Espresso|30|ml
+ING|Lapte|150|ml
+
+DESERT|Brownie de ciocolata|180|Desert|15.0|450|1
+ING|Faina|100|g
+ING|Cacao|8|g
+ING|Oua|2|buc
+ING|Unt|50|g
+
+DESERT|Croissant|60|Patiserie|8.0|280|0
+ING|Faina|100|g
+ING|Unt|50|g
+
+SANDWICH|Club Sandwich|45|Sandvisuri|18.0|0|0
+ING|Paine|80|g
+ING|Pui|100|g
+ING|Salata|30|g
+ING|Rosii|40|g
+
+SANDWICH|Sandwich Vegetal|40|Sandvisuri|16.0|1|1
+ING|Paine fara gluten|80|g
+ING|Hummus|50|g
+ING|Avocado|60|g
+ING|Castravete|40|g

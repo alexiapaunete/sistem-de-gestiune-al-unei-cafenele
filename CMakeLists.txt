@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(CafeneaApp CXX)
+project(cafenea CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,13 +19,14 @@ set(SOURCES
         src/Produs.cpp
         src/Bautura.cpp
         src/Desert.cpp
+        src/Sandwich.cpp
         src/Comanda.cpp
         src/Inventar.cpp
         src/Cafenea.cpp
         src/main.cpp
-        include/Desert.h
-        src/Desert.cpp
-        include/Exceptii.h
 )
 
 add_executable(cafenea ${SOURCES})
+
+include(cmake/CopyHelper.cmake OPTIONAL)
+file(COPY assets/ DESTINATION ${CMAKE_BINARY_DIR}/assets)
